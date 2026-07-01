@@ -1,0 +1,121 @@
+[2026-06-15 10:41:11 UTC] vcs -full64 -licqueue '-timescale=1ns/1ns' '+vcs+flush+all' '+warn=all' '-sverilog' design.sv testbench.sv  && ./simv +vcs+lic+wait  
+                         Chronologic VCS (TM)
+       Version X-2025.06-SP1_Full64 -- Mon Jun 15 06:41:13 2026
+
+                    Copyright (c) 1991 - 2025 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+
+Parsing design file 'design.sv'
+Parsing design file 'testbench.sv'
+Top Level Modules:
+       tb_top
+TimeScale is 1 ns / 1 ps
+
+Warning-[INTFDV] VCD dumping of interface/program/package
+testbench.sv, 323
+  Selective VCD dumping of interface 'majority_if' is not supported.  
+  Selective VCD dumping for interfaces, packages and programs is not 
+  supported.
+  Use full VCD dumping '$dumpvars(0)', or use VPD or FSDB dumping, recompile 
+  with '-debug_access'.
+
+Starting vcs inline pass...
+5 modules and 0 UDP read.
+recompiling package vcs_paramclassrepository
+recompiling module majority_voter
+recompiling module majority_if
+recompiling package mv_pkg
+recompiling module tb_top
+All of 5 modules done
+rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+if [ -x ../simv ]; then chmod a-x ../simv; fi
+g++  -o ../simv      -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/apps/vcsmx/vcs/X-2025.06-SP1/linux64/lib -L/apps/vcsmx/vcs/X-2025.06-SP1/linux64/lib  -Wl,-rpath-link=./   objs/amcQw_d.o  _287_archive_1.so  SIM_l.o       rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o            -lvirsim -lerrorinf -lsnpsmalloc -lvfs      -lvcsnew -ldistsimclient -lsimprofile -luclinative /apps/vcsmx/vcs/X-2025.06-SP1/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive          /apps/vcsmx/vcs/X-2025.06-SP1/linux64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+CPU time: .837 seconds to compile + .930 seconds to elab + .534 seconds to link
+Chronologic VCS simulator copyright 1991-2025
+Contains Synopsys proprietary information.
+Compiler version X-2025.06-SP1_Full64; Runtime version X-2025.06-SP1_Full64;  Jun 15 06:41 2026
+
+Am randomizat: en: 0 i0: 1 i1: 0 i2: 0 i3: 0
+
+Am randomizat: en: 0 i0: 1 i1: 0 i2: 1 i3: 1
+
+Am randomizat: en: 1 i0: 0 i1: 1 i2: 0 i3: 0
+
+Am randomizat: en: 1 i0: 0 i1: 1 i2: 1 i3: 1
+
+Am randomizat: en: 1 i0: 0 i1: 1 i2: 1 i3: 0
+
+==== PASSED ==== checks=12
+
+=========== Functional Coverage ===========
+ cp_vec    :  37.50%
+ cp_pop    :  80.00%
+ cp_en     : 100.00%
+ cp_vote   : 100.00%
+ x_en_vote :  75.00%
+ OVERALL   :  78.50%
+
+ cp_vec bins  (in3in2in1in0):
+   vec[ 0]  0000 : hits=2           HIT
+   vec[ 1]  0001 : hits=1           HIT
+   vec[ 2]  0010 : hits=1           HIT
+   vec[ 3]  0011 : hits=0  *** MISS ***
+   vec[ 4]  0100 : hits=0  *** MISS ***
+   vec[ 5]  0101 : hits=0  *** MISS ***
+   vec[ 6]  0110 : hits=7           HIT
+   vec[ 7]  0111 : hits=0  *** MISS ***
+   vec[ 8]  1000 : hits=0  *** MISS ***
+   vec[ 9]  1001 : hits=0  *** MISS ***
+   vec[10]  1010 : hits=0  *** MISS ***
+   vec[11]  1011 : hits=0  *** MISS ***
+   vec[12]  1100 : hits=0  *** MISS ***
+   vec[13]  1101 : hits=1           HIT
+   vec[14]  1110 : hits=1           HIT
+   vec[15]  1111 : hits=0  *** MISS ***
+
+ cp_pop bins  (#inputs high):
+   none(0) : hits=2           HIT
+   one (1) : hits=2           HIT
+   tie (2) : hits=7           HIT
+   maj3(3) : hits=2           HIT
+   all4(4) : hits=0  *** MISS ***
+
+ cp_en bins:
+   en=0   : hits=4           HIT
+   en=1   : hits=9           HIT
+
+ cp_vote bins:
+   vote=0 : hits=12           HIT
+   vote=1 : hits=1           HIT
+
+ x_en_vote cross bins (en,vote):
+   (en=0,vote=0) : hits=4           HIT
+   (en=0,vote=1) : hits=0  *** MISS ***
+   (en=1,vote=0) : hits=8           HIT
+   (en=1,vote=1) : hits=1           HIT
+===========================================
+
+$finish called from file "testbench.sv", line 320.
+$finish at simulation time               160000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 160000 ps
+CPU Time:      0.700 seconds;       Data structure size:   0.0Mb
+Mon Jun 15 06:41:16 2026
+Finding VCD file...
+./dump.vcd
+[2026-06-15 10:41:17 UTC] Opening EPWave...
+Done
