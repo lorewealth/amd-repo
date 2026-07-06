@@ -59,10 +59,16 @@ def parse_file(fisier):
     return parse_header(text)
 
 
-def bin_append_non_vec(m, current_cp):
-    name, hits, status = m.groups()
-    hit = status == "HIT"
-    current_cp.bins.append(Bin(name=name, hits=int(hits), hit=hit))
+def bin_append(m, current_cp):
+    grup = m.groups()
+    if len(grup) == 4:
+        name, value, hits, status = grup
+        hit = status == "HIT"
+        current_cp.bins.append(Bin(name=name, hits=int(hits), hit=hit, value=value))
+    else:
+        name, hits, status = grup
+        hit = status == "HIT"
+        current_cp.bins.append(Bin(name=name, hits=int(hits), hit=hit))
 
 
 def parse_header(text):
@@ -120,18 +126,10 @@ def parse_header(text):
                     m3 = RE_BIN_EN_VOTE.match(line)
                     m4 = RE_BIN_X_EN_VOTE.match(line)
 
-                    if m1 and current_cp is not None:
-                        name, value, hits, status = m1.groups()
-                        hit = status == "HIT"
-                        current_cp.bins.append(
-                            Bin(name=name, hits=int(hits), hit=hit, value=value)
-                        )
-                    elif m2 and current_cp is not None:
-                        bin_append_non_vec(m2, current_cp)
-                    elif m3 and current_cp is not None:
-                        bin_append_non_vec(m3, current_cp)
-                    elif m4 and current_cp is not None:
-                        bin_append_non_vec(m4, current_cp)
+                    for m in (m1, m2, m3, m4):
+                        if m and current_cp is not None:
+                            bin_append(m, current_cp)
+                            break
     return Returnabil(
         run_date=run_date,
         run_datetime=run_datetime,
