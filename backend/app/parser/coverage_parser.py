@@ -59,6 +59,12 @@ def parse_file(fisier):
     return parse_header(text)
 
 
+def bin_append_non_vec(m, current_cp):
+    name, hits, status = m.groups()
+    hit = status == "HIT"
+    current_cp.bins.append(Bin(name=name, hits=int(hits), hit=hit))
+
+
 def parse_header(text):
     run_date: str | None = None
     run_datetime: datetime | None = None
@@ -121,17 +127,11 @@ def parse_header(text):
                             Bin(name=name, hits=int(hits), hit=hit, value=value)
                         )
                     elif m2 and current_cp is not None:
-                        name, hits, status = m2.groups()
-                        hit = status == "HIT"
-                        current_cp.bins.append(Bin(name=name, hits=int(hits), hit=hit))
+                        bin_append_non_vec(m2, current_cp)
                     elif m3 and current_cp is not None:
-                        name, hits, status = m3.groups()
-                        hit = status == "HIT"
-                        current_cp.bins.append(Bin(name=name, hits=int(hits), hit=hit))
+                        bin_append_non_vec(m3, current_cp)
                     elif m4 and current_cp is not None:
-                        name, hits, status = m4.groups()
-                        hit = status == "HIT"
-                        current_cp.bins.append(Bin(name=name, hits=int(hits), hit=hit))
+                        bin_append_non_vec(m4, current_cp)
     return Returnabil(
         run_date=run_date,
         run_datetime=run_datetime,
