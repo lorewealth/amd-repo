@@ -1,3 +1,3 @@
 from .bin import BinOut
 from .coverpoint import CoverpointOut
-from .run import RunDetail, RunSummary
+from .run import RunDetail, RunListParams, RunSummary
