@@ -4,7 +4,7 @@ from decimal import Decimal
 from pydantic.config import ConfigDict
 from pydantic.main import BaseModel
 
-from app.schemas.coverpoint import CoverpointOut
+from .coverpoint import CoverpointOut
 
 
 class RunSummary(BaseModel):

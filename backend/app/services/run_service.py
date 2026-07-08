@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
-from app.repositories import run_repository
-from app.schemas import BinOut, CoverpointOut, RunDetail, RunListParams
+from backend.app.repositories import run_repository
+from backend.app.schemas import BinOut, CoverpointOut, RunDetail, RunListParams
 
 
 def list_runs(session, params: RunListParams):

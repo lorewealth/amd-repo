@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, selectinload
 
-from models import Coverpoint, Run
+from db import Coverpoint, Run
 
 
 def get_all_runs(session: Session, limit=20, offset=0, result=None, min_coverage=None):

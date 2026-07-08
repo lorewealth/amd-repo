@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 
-from app.schemas.run import RunDetail, RunListParams, RunSummary
-from app.services import run_service
-from database import get_db
+from backend.app.schemas.run import RunDetail, RunListParams, RunSummary
+from backend.app.services import run_service
+from db import get_db
 
 router = APIRouter()
 

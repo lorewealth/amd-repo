@@ -1,7 +1,7 @@
 from pydantic.config import ConfigDict
 from pydantic.main import BaseModel
 
-from app.schemas.bin import BinOut
+from .bin import BinOut
 
 
 class CoverpointOut(BaseModel):

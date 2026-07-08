@@ -1,13 +1,9 @@
 from pathlib import Path
-from sys import path
-
-path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 
 from sqlalchemy.orm import Session
 
 from backend.app.parser.coverage_parser import parse_file
-from backend.database import engine
-from backend.models import Bin, Coverpoint, Run
+from db import Bin, Coverpoint, Run, engine
 
 
 def main():
