@@ -14,9 +14,7 @@ from sqlalchemy.orm import (
     relationship,
 )
 
-from database import (
-    Base,
-)
+from db import Base
 
 
 class Run(Base):
@@ -25,10 +23,12 @@ class Run(Base):
     filename: Mapped[str] = mapped_column(String, nullable=False)
     run_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
     result: Mapped[str] = mapped_column(String, nullable=False)
-    checks: Mapped[int] = mapped_column(Integer)
-    overall_coverage: Mapped[Decimal] = mapped_column(Numeric(5, 2))
-    uploaded_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    uploaded_by: Mapped[str] = mapped_column(String)
+    checks: Mapped[int] = mapped_column(Integer, nullable=False)
+    overall_coverage: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False)
+    uploaded_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
+    uploaded_by: Mapped[str | None] = mapped_column(String)
     coverpoints = relationship(
         "Coverpoint",
         back_populates="run",

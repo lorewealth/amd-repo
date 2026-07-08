@@ -1,6 +1,6 @@
 import pytest
 
-from app.parser.coverage_parser import parse_file
+from backend.app.parser.coverage_parser import parse_file
 
 
 @pytest.fixture
