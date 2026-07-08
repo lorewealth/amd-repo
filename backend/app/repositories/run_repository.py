@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, selectinload
 
-from models import Coverpoint, Run
+from db import Coverpoint, Run
 
 
 def get_all_runs(session: Session, limit=20, offset=0, result=None, min_coverage=None):
@@ -19,3 +19,18 @@ def get_run_by_id(session: Session, run_id: int):
         .filter(Run.id == run_id)
         .first()
     )
+
+
+def get_run_by_filename(session: Session, filename: str):
+    return session.query(Run).filter_by(filename=filename).first()
+
+
+def create_run(session: Session, run: Run):
+    try:
+        session.add(run)
+        session.commit()
+        session.refresh(run)
+        return run
+    except Exception:
+        session.rollback()
+        raise

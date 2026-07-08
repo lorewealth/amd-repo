@@ -1,3 +1,4 @@
+from db import Base
 from sqlalchemy import (
     Boolean,
     ForeignKey,
@@ -10,10 +11,6 @@ from sqlalchemy.orm import (
     relationship,
 )
 
-from database import (
-    Base,
-)
-
 
 class Bin(Base):
     __tablename__ = "bins"
@@ -22,7 +19,7 @@ class Bin(Base):
         ForeignKey("coverpoints.id", ondelete="CASCADE")
     )
     name: Mapped[str] = mapped_column(String, nullable=False)
-    value: Mapped[str] = mapped_column(String)
+    value: Mapped[str | None] = mapped_column(String)
     hits: Mapped[int] = mapped_column(Integer, nullable=False)
     hit: Mapped[bool] = mapped_column(Boolean, nullable=False)
     coverpoint = relationship("Coverpoint", back_populates="bins")
