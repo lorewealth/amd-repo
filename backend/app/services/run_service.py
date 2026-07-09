@@ -1,20 +1,19 @@
 from decimal import Decimal
 
-from fastapi import HTTPException
-
 from backend.app.parser.coverage_parser import parse_header
 from backend.app.repositories import run_repository
 from backend.app.schemas import BinOut, CoverpointOut, RunDetail, RunListParams
 from db import Bin, Coverpoint, Run
-
+from backend.app.services.exceptions import DuplicateRunError, InvalidLogError, RunNotFound
 
 def create_run_from_log(session, filename, text, uploaded_by=None):
+    filename = filename.lower()
     if run_repository.get_run_by_filename(session, filename) is not None:
-        raise HTTPException(409, f"Fisierul {filename} este deja incarcat in db")
+        raise DuplicateRunError(filename)
     try:
         report = parse_header(text)
     except ValueError as exc:
-        raise HTTPException(400, f"Log invalid {exc}")
+        raise InvalidLogError(str(exc))
 
     run = Run(
         filename=filename,
@@ -79,7 +78,7 @@ def to_coverpointOut(cp):
 def get_run(session, run_id: int):
     run = run_repository.get_run_by_id(session, run_id)
     if run is None:
-        raise HTTPException(status_code=404, detail="Run not found")
+        raise RunNotFound()
 
     coverpoints = [
         to_coverpointOut(cp) for cp in sorted(run.coverpoints, key=lambda cp: cp.id)

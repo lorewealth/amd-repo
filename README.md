@@ -17,3 +17,9 @@ Si datele vor fi pastrate in baza de date si ulterior afisate in UI.
 Daca un fisier cu acelasi nume ca si cel prezent in db este incercat sa fie incarcat, va fi apelat
 un error code 409, adica "Conflict", fara sa salveze in db
 Scopul: pentru a evita garbage-ing db-ului
+
+## Get-urile deschise
+Le-am lasat deschise fiind faptu ca user sa poate sa vada
+simularile, nu este nici un beneficiu de a le proteja, pecand
+pentru upload cat de cat sens mai este fiind avem nevoie de
+identitatea reala a userului

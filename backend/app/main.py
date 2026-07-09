@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 
 from backend.app.config import get_settings
-from backend.app.routers import runs
+from backend.app.routers import runs, auth
 
 settings = get_settings()
 
@@ -20,8 +21,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(runs.router, prefix="/runs", tags=["runs"])
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.jwt_secret
+)
 
+app.include_router(runs.router, prefix="/runs", tags=["runs"])
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
 @app.get("/")
 def health_check():

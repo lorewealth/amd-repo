@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-
+from backend.app.auth.dependencies import check_email
 from backend.app.config import get_settings
 from backend.app.schemas import RunDetail, RunListParams, RunSummary
+from backend.app.services.exceptions import DuplicateRunError, InvalidLogError, RunNotFound
 from backend.app.services import run_service
 from db import get_db
 
@@ -33,8 +34,10 @@ def list_runs(params: RunListParams = Depends(), db=Depends(get_db)):
 )
 def get_run(run_id: int, db=Depends(get_db)):
     """Returneaza detalii unei singure rulari dupa id, inclusiv coverpoints si bins"""
-    return run_service.get_run(db, run_id)
-
+    try:
+        return run_service.get_run(db, run_id)
+    except RunNotFound as exc:
+        raise HTTPException(404, str(exc))
 
 @router.post(
     "/upload",
@@ -44,12 +47,13 @@ def get_run(run_id: int, db=Depends(get_db)):
     responses={
         400: {"description": "Fisier invalid(extensie gresita sau continut gol)"},
         413: {
-            "description": f"Fisierul depaseste limita permisa: {settings.max_upload_gb}"
+            "description": f"Fisierul depaseste limita permisa: {settings.max_upload_size_view}"
         },
         409: {"description": "Fisier este deja existent in db"},
+        401: {"description": "Nu sunteti logati in sistem"}
     },
 )
-async def upload_run(file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_run(file: UploadFile = File(...), db: Session = Depends(get_db), user: str = Depends(check_email)):
     """Primeste un fisier .txt cu log de simulare, il parseaza si salveaza rezultatul in baza de date"""
     if file.filename is None or not file.filename.lower().endswith(".txt"):
         raise HTTPException(400, "Sunt acceptate doar fisiere de tip .txt")
@@ -57,6 +61,11 @@ async def upload_run(file: UploadFile = File(...), db: Session = Depends(get_db)
     if not raw:
         raise HTTPException(400, "Fisierul este gol")
     if len(raw) > settings.max_upload_bytes:
-        raise HTTPException(413, f"Fisier este prea mare: {settings.max_upload_gb}")
+        raise HTTPException(413, f"Fisier este prea mare: {settings.max_upload_size_view}")
     text = raw.decode("utf-8")
-    return run_service.create_run_from_log(db, file.filename, text)
+    try:
+        return run_service.create_run_from_log(db, file.filename, text, uploaded_by=user)
+    except DuplicateRunError as exc:
+        raise HTTPException(409, str(exc))
+    except InvalidLogError as exc:
+        raise HTTPException(400, str(exc))
