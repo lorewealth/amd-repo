@@ -1,22 +1,14 @@
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi import Depends
+from fastapi import Depends, HTTPException
+from .jwt import oauth2_scheme
 from jose import jwt, JWTError
-from datetime import datetime, timedelta
 
-from starlette.exceptions import HTTPException
 from backend.app.config import get_settings
 
 settings = get_settings()
 
-def create_access_token(sub: str) -> str:
-    payload = {"sub":sub, "exp":datetime.utcnow() + timedelta(hours=24)}
-    return jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
-
-bearer = HTTPBearer()
-
-def get_current_user(cred: HTTPAuthorizationCredentials = Depends(bearer)) -> str:
+def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
     try:
-        payload = jwt.decode(cred.credentials, settings.jwt_secret, algorithms=["HS256"])
+        payload = jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])
     except JWTError:
         raise HTTPException(401, "Token invalid sau expirat")
     return payload["sub"]

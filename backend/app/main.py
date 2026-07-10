@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-
 from backend.app.config import get_settings
 from backend.app.routers import runs, auth
 
@@ -11,6 +10,9 @@ app = FastAPI(
     title="Functional Coverage Dashboard",
     description="API pentru upload si vizualizare rezultatelor de coverage functional din simulari VCS.",
     version="1.0.0",
+    swagger_ui_init_oauth={
+        "usePkceWithAuthorizationCodeGrant": True,
+    },
 )
 
 app.add_middleware(
