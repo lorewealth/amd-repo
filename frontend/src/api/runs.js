@@ -2,7 +2,7 @@ import api from './client'
 
 export function getRuns()
 {
-  return api.get('/runs')
+  return api.get('/runs/')
 }
 
 export function getRun(id)
