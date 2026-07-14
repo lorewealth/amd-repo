@@ -1,15 +1,14 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <p>
+      Dashboard pentru vizualizarea coverage-ului funcțional din simulări VCS, construit cu FastAPI și Vue în cadrul practicii de vară USV 2026
+    </p>
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
+<style scoped>
+.about {
+  max-width: 750px;
+  margin: 0 auto;
 }
 </style>

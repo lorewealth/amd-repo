@@ -12,6 +12,8 @@ app = FastAPI(
     version="1.0.0",
     swagger_ui_init_oauth={
         "usePkceWithAuthorizationCodeGrant": True,
+        "clientId":"fcd-swagger-ui",
+        "scopes":"openid email profile",
     },
 )
 

@@ -6,8 +6,7 @@ import { RouterLink } from 'vue-router';
 
 <template>
   <nav>
-    <RouterLink :to="{name: 'home'}" class="btn">Acasa</RouterLink>
-    <RouterLink :to="{name: 'runs'}" class="btn">Rularile</RouterLink>
+    <RouterLink :to="{name: 'runs'}" class="btn">Rulari</RouterLink>
     <RouterLink :to="{name: 'about'}" class="btn">Despre</RouterLink>
   </nav>
 </template>

@@ -29,3 +29,11 @@ astfel primesti 403 chiar daca token e valid.
 Am ales asa abordare din cauza ca login prin Google valideaza 
 identitatea unui cont, dar nu se increde daca contul acel
 nu este un cont bot, sau un cont cu itentii rele.
+## Autentificare in Swagger (doar pentru dev)
+1. Completeaza `GOOGLE_CLIENT_ID` si `GOOGLE_CLIENT_SECRET` in `.env`.
+2. Deschide  http://localhost:8000/docs, apoi butonul **Authorize** din modal.
+3. Alege contul Google.
+
+Campul `client_id` e precompletat (`fcd-swagger-ui` - identificator intern, nu e un client Google),
+iar campul `client_secret` **se lasa gol**: endpoint-ul `/auth/token` nu il foloseste,
+secretul real sta doar in `.env`.
