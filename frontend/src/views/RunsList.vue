@@ -1,12 +1,13 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
-import { covClass, fmtDate, fmtPct } from '@/utils/format'
-import router from '@/router/index'
+import { covClass, fmtDate, fmtPercent } from '@/utils/format'
+import {useRouter} from 'vue-router'
 import { useRunsStore } from '@/stores/runs'
 
 const store = useRunsStore()
 const sortKey = ref('run_date')
 const sortDir = ref('desc')
+const router = useRouter()
 
 function sortBy(key) {
   if(sortKey.value === key){
@@ -52,40 +53,49 @@ onMounted(async () =>{
 <template>
   <p v-if="store.loading">Loading...</p>
   <p v-else-if="store.error">{{store.error}}</p>
-  <div v-else>
+  <div class="content" v-else>
     <p v-if="store.totalRuns === 0">Nicio rulare inca - urca una</p>
     <div v-else>
       <p>Nr. de rulari: {{store.totalRuns}}</p>
-      <p>Average-ul: <span :class="covClass(store.avgCoverage)">{{fmtPct(store.avgCoverage)}}</span></p>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="col in cols" :key="col.key" @click="sortBy(col.key)">
-              {{col.label}} <span v-if="sortKey === col.key">{{ sortDir === 'asc' ? '⌃' : '⌄'}}</span>
-            </th>
-            <th>Rezultat</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="run in dispRuns" :key="run.id" @click="router.push(`/runs/${run.id}`)">
-            <td>{{ fmtDate(run.run_date) }}</td>
-            <td>{{ run.filename }}</td>
-            <td :class="covClass(run.overall_coverage)">
-              {{ fmtPct(run.overall_coverage) }}
-            </td>
-            <td>
-              <span class="badge" :class="run.result.toLowerCase()">
-                {{ run.result }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <p>Average-ul: <span :class="covClass(store.avgCoverage)">{{fmtPercent(store.avgCoverage)}}%</span></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th v-for="col in cols" :key="col.key" @click="sortBy(col.key)">
+                {{col.label}} <span v-if="sortKey === col.key">{{ sortDir === 'asc' ? '⌃' : '⌄'}}</span>
+              </th>
+              <th>Rezultat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="run in dispRuns" :key="run.id" @click="router.push(`/runs/${run.id}`)" tabindex="0" @keydown.enter="router.push(`/runs/${run.id}`)">
+              <td>{{ fmtDate(run.run_date) }}</td>
+              <td>{{ run.filename }}</td>
+              <td :class="covClass(run.overall_coverage)">
+                {{ fmtPercent(run.overall_coverage) }}%
+              </td>
+              <td>
+                <span class="badge" :class="(run.result || '').toLowerCase()">
+                  {{ run.result }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+  .table-wrap{
+    overflow-x: auto;
+  }
+  .content{
+    max-width:750px;
+    margin: 0 auto;
+  }
   .cov-good{
     color: #2e7d32;
   }
@@ -100,17 +110,19 @@ onMounted(async () =>{
     border-radius: 4px;
   }
   .badge.passed{
-    color: #2e7d32;
+    color: #3fb950;
+    background: rgba(46, 160, 67, 0.15);
   }
   .badge.failed{
-    color: #c62828;
+    color: #f85149;
+    background: rgba(248, 81, 73, 0.15);
   }
   table{
     border-collapse: collapse;
     width: 100%;
   }
   td, th {
-    border: 1px solid #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 10px 25px;
     text-align:center;
   }

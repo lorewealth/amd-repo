@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import Navigation from '@/components/Navigation.vue'
 
 </script>
@@ -11,7 +11,7 @@ import Navigation from '@/components/Navigation.vue'
       <Navigation/>
     </div>
   </header>
-  <main class="content">
+  <main>
     <RouterView/>
   </main>
 </template>
@@ -22,9 +22,5 @@ import Navigation from '@/components/Navigation.vue'
   flex-direction:column;
   justify-content:center;
   align-items:center;
-}
-.content{
-  display:flex;
-  justify-content:center;
 }
 </style>
