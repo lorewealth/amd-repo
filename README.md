@@ -37,3 +37,10 @@ nu este un cont bot, sau un cont cu itentii rele.
 Campul `client_id` e precompletat (`fcd-swagger-ui` - identificator intern, nu e un client Google),
 iar campul `client_secret` **se lasa gol**: endpoint-ul `/auth/token` nu il foloseste,
 secretul real sta doar in `.env`.
+
+## Stocharea tokenului
+Pentru acest proiect vom utiliza Pinia + localStorage
+Se intalege ca riscul utilizand localStorage fiind faptul ca
+ea este vulnerabila de injectarea codului, deci se poate de citit,
+iar daca vom utiliza dor Pinia, e o soluita la aceasta dar la refresh
+datele se pierd.

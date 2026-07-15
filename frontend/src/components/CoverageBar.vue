@@ -14,7 +14,7 @@ const width = computed(() => `${Math.min(100, Math.max(0, pct.value))}%`)
 </script>
 
 <template>
-<div class="cov-bar">
+<div>
   <div class="cov-head">
     <span>{{label}}:</span>
     <span :style="{color}">{{fmtPercent(pct)}}%</span>
@@ -26,9 +26,6 @@ const width = computed(() => `${Math.min(100, Math.max(0, pct.value))}%`)
 </template>
 
 <style scoped>
-.cov-bar{
-
-}
 .cov-head{
   display:flex;
   justify-content: space-between;
