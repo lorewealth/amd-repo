@@ -5,7 +5,7 @@ import BinCell from '@/components/BinCell.vue';
 import CoverageBar from '@/components/CoverageBar.vue';
 import { getRun } from '@/api/runs';
 import { onMounted, ref } from 'vue';
-import { fmtDate } from '@/utils/format';
+import { fmtDate, fmtPercent } from '@/utils/format';
 
 
 const run = ref(null)
@@ -31,19 +31,18 @@ onMounted(async () =>{
   <p v-if="loading">Loading...</p>
   <div v-else-if="error === 404">
     <p>Rularea #{{route.params.id}} nu exista</p>
-    <RouterLink :to="{name:'runs'}" class="btn">Inapoi la rulari</RouterLink>
   </div>
   <p v-else-if="error">Nu am putut incarca datele</p>
-  <div class="displaying" v-else="run">
-    <RouterLink :to="{name:'runs'}" class="btn">Inapoi la rulari</RouterLink>
+  <div class="displaying" v-else>
     <div>
       <p>Detalii pentru rularea #{{route.params.id}}:</p>
       <p>Fisier: {{run.filename}}</p>
       <p>Data rularii: {{fmtDate(run.run_date)}}</p>
-      <p>Procentaj general: {{run.overall_coverage}}%</p>
+      <p v-if="run.uploaded_by">Urcat de: {{run.uploaded_by}}</p>
+      <p>Procentaj general: {{fmtPercent(run.overall_coverage)}}%</p>
       <p>Rezultat: {{run.result}}</p>
       <p>Binuri ratate: {{run.missed_bins}}/{{run.total_bins}}</p>
-      <CoverageBar class="cp-bar" label="OVERALL" :percent="run.overall_coverage"/>
+      <CoverageBar label="OVERALL" :percent="run.overall_coverage"/>
       <div class="legend">
         <span :style="{opacity: 0.7}">Legenda culorii:</span>
         <span class="swatch c-green"></span> HIT - bin atins
@@ -51,7 +50,7 @@ onMounted(async () =>{
       </div>
     </div>
     <div v-for="cp in run.coverpoints" :key="cp.name">
-      <CoverageBar class="cp-bar" :label="cp.name" :percent="cp.coverage"/>
+      <CoverageBar :label="cp.name" :percent="cp.coverage"/>
       <span class="cp-summary">
         {{cp.total_bins - cp.missed_bins}}/{{cp.total_bins}} bin-uri atinse
       </span>
@@ -63,15 +62,13 @@ onMounted(async () =>{
 </template>
 
 <style scoped>
-.cp-bar{
-  margin: 5px 0 4px 0;
-}
 .displaying{
   display:flex;
   flex-direction:column;
   gap:24px;
   max-width:750px;
   margin: 0 auto;
+  margin-bottom: 25px;
 }
 .bin-grid{
   display:grid;

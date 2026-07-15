@@ -1,12 +1,12 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import Navigation from '@/components/Navigation.vue'
+import Navigation from '@/components/Navigation.vue';
 
 </script>
 
 <template>
   <header>
-    <div class="nav-wrapper">
+    <div class="div-wrapper">
       <h1>Functional Coverage Dashboard</h1>
       <Navigation/>
     </div>
@@ -17,10 +17,10 @@ import Navigation from '@/components/Navigation.vue'
 </template>
 
 <style scoped>
-.nav-wrapper{
+.div-wrapper{
   display:flex;
   flex-direction:column;
-  justify-content:center;
   align-items:center;
+  margin-top: 25px;
 }
 </style>

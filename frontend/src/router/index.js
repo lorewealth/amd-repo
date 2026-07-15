@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth'
 import { createRouter, createWebHistory } from 'vue-router'
 
 
@@ -20,10 +21,29 @@ const router = createRouter({
     },
     {
       path: '/runs/:id',
-      name: 'runs-detail',
+      name: 'run-detail',
       component: () => import('@/views/RunDetail.vue')
     },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: () => import('@/views/Upload.vue'),
+      meta: {requiresAuth: true}
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/Login.vue')
+    },
   ],
+})
+
+router.beforeEach((to) => {
+  const auth = useAuthStore()
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    return {name: 'login', query: {redirect: to.fullPath}}
+  }
+  return true
 })
 
 export default router

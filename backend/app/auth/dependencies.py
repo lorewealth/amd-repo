@@ -14,8 +14,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
     return payload["sub"]
 
 def check_email(user: str = Depends(get_current_user)) -> str:
-    allowed = {e.strip().lower() for e in settings.allowed_email_list.split(",")}
-    if user.lower() in allowed:
+    if not settings.allowed_email_list or user.lower() in settings.allowed_email_list:
         return user
     else:
         raise HTTPException(403, "Nu aveti permisiunea de a incarca")

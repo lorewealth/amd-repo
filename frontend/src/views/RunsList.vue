@@ -1,9 +1,9 @@
 <script setup>
-import {ref, computed, onMounted} from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { covClass, fmtDate, fmtPercent } from '@/utils/format'
-import {useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useRunsStore } from '@/stores/runs'
-
+import CoverageBar from '@/components/CoverageBar.vue'
 const store = useRunsStore()
 const sortKey = ref('run_date')
 const sortDir = ref('desc')
@@ -42,6 +42,7 @@ const cols = [
   {key:'run_date', label:'Data'},
   {key:'filename', label:'Fisier'},
   {key:'overall_coverage', label:'Acoperire'},
+  {key:'result', label:'Rezultat'},
 ]
 
 onMounted(async () =>{
@@ -57,15 +58,14 @@ onMounted(async () =>{
     <p v-if="store.totalRuns === 0">Nicio rulare inca - urca una</p>
     <div v-else>
       <p>Nr. de rulari: {{store.totalRuns}}</p>
-      <p>Average-ul: <span :class="covClass(store.avgCoverage)">{{fmtPercent(store.avgCoverage)}}%</span></p>
+      <CoverageBar label="Average-ul" :percent="fmtPercent(store.avgCoverage)"/>
       <div class="table-wrap">
-        <table>
+        <table class="table">
           <thead>
             <tr>
               <th v-for="col in cols" :key="col.key" @click="sortBy(col.key)">
-                {{col.label}} <span v-if="sortKey === col.key">{{ sortDir === 'asc' ? '⌃' : '⌄'}}</span>
+                {{col.label}} <span v-if="sortKey === col.key">{{ sortDir === 'asc' ? '▲' : '▼'}}</span>
               </th>
-              <th>Rezultat</th>
             </tr>
           </thead>
           <tbody>
@@ -89,9 +89,6 @@ onMounted(async () =>{
 </template>
 
 <style scoped>
-  .table-wrap{
-    overflow-x: auto;
-  }
   .content{
     max-width:750px;
     margin: 0 auto;
@@ -117,14 +114,28 @@ onMounted(async () =>{
     color: #f85149;
     background: rgba(248, 81, 73, 0.15);
   }
-  table{
-    border-collapse: collapse;
-    width: 100%;
+  .table-wrap{
+    margin: 15px 0px 20px 0px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: auto;
+    height:250px;
   }
-  td, th {
+  .table{
+    border-collapse: separate;
+    border-spacing:0;
+    width: 100%;
+    table-layout:auto;
+  }
+  .table td, .table th {
     border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 10px 25px;
     text-align:center;
+  }
+  .table th{
+    position:sticky;
+    background: rgba(0, 51, 79, 1.0);
+    top: 0;
+    z-index: 2;
   }
   tbody tr:hover{
     background-color:#3a3a3a;
