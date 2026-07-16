@@ -8,7 +8,7 @@
 
 <style scoped>
 .about {
-  max-width: 750px;
+  max-width: min(900px, 95%);
   margin: 0 auto;
 }
 </style>

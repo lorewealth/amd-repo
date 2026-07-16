@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import client from '@/api/client';
+import { loginUrl } from '@/api/auth';
 
 const route = useRoute()
 const router = useRouter()
@@ -13,20 +13,15 @@ const loading = ref(false)
 function loginWithGoogle(){
   if(route.query.redirect)
     sessionStorage.setItem('post-login-redirect', route.query.redirect)
-  const redirectUri = window.location.origin + '/login'
-  window.location.href = '/api/auth/login?redirect_uri=' + encodeURIComponent(redirectUri)
+  window.location.href = loginUrl(window.location.origin + '/login')
 }
 
 onMounted(async () =>{
   const code = route.query.code
   if (!code) return
   loading.value = true
-  try{
-    const form = new URLSearchParams()
-    form.append('code', code)
-    const { data } = await client.post('/auth/token', form)
-    const email = JSON.parse(atob(data.access_token.split('.')[1])).sub
-    auth.setSession(data.access_token, email)
+  try {
+    await auth.handleCallback(code)
     const target = sessionStorage.getItem('post-login-redirect')
     sessionStorage.removeItem('post-login-redirect')
     router.replace(target || { name: 'runs' })

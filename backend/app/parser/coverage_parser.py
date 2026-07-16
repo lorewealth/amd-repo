@@ -96,9 +96,9 @@ def parse_header(text):
                     result, checks = m.group(1), int(m.group(2))
                 if "Functional Coverage" in line:
                     if run_date is None:
-                        raise ValueError(": Linia de data lispeste din log")
+                        raise ValueError("Linia de data lipseste din fisier")
                     if result is None:
-                        raise ValueError(": Linia de PASSED|FAILED lipseste din log")
+                        raise ValueError("Linia de PASSED|FAILED lipseste din fisier")
                     state = State.IN_SUMMARY
             case State.IN_SUMMARY:
                 if "bins" in line:
@@ -134,7 +134,7 @@ def parse_header(text):
                     m4 = RE_BIN_X_EN_VOTE.match(line)
 
                     if not (m1 or m2 or m3 or m4):
-                        raise ValueError(": Linie de bin eronata/necunoscuta")
+                        raise ValueError("Linie de bin eronata/necunoscuta")
 
                     for m in (m1, m2, m3, m4):
                         if m and current_cp is not None:

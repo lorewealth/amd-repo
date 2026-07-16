@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { covClass, fmtDate, fmtPercent } from '@/utils/format'
+import { covBadgeClass, covClass, covStatus, fmtDate, fmtPercent } from '@/utils/format'
 import { useRouter } from 'vue-router'
 import { useRunsStore } from '@/stores/runs'
 import CoverageBar from '@/components/CoverageBar.vue'
@@ -28,9 +28,9 @@ const dispRuns = computed(() => {
       valA = new Date(valA);
       valB = new Date(valB)
     }
-    if(sortKey.value === 'overall_coverage'){
-      valA = Number(valA)
-      valB = Number(valB)
+    if(sortKey.value === 'overall_coverage' || sortKey.value === 'result'){
+      valA = Number(a.overall_coverage)
+      valB = Number(b.overall_coverage)
     }
     if(valA < valB) return sortDir.value === 'asc' ? -1 : 1
     if(valA > valB) return sortDir.value === 'asc' ? 1 : -1
@@ -55,10 +55,16 @@ onMounted(async () =>{
   <p v-if="store.loading">Loading...</p>
   <p v-else-if="store.error">{{store.error}}</p>
   <div class="content" v-else>
-    <p v-if="store.totalRuns === 0">Nicio rulare inca - urca una</p>
+    <p v-if="store.totalRuns === 0" class="empty">Nicio rulare inca - urca una</p>
     <div v-else>
       <p>Nr. de rulari: {{store.totalRuns}}</p>
       <CoverageBar label="Average-ul" :percent="fmtPercent(store.avgCoverage)"/>
+      <div class="legend">
+        <span :style="{opacity: 0.7}">Legenda culorii:</span>
+        <span class="swatch c-green"></span> PASSED
+        <span class="swatch c-yellow"></span> FAILED dar admisibil
+        <span class="swatch c-red"></span> FAILED
+      </div>
       <div class="table-wrap">
         <table class="table">
           <thead>
@@ -69,15 +75,15 @@ onMounted(async () =>{
             </tr>
           </thead>
           <tbody>
-            <tr v-for="run in dispRuns" :key="run.id" @click="router.push(`/runs/${run.id}`)" tabindex="0" @keydown.enter="router.push(`/runs/${run.id}`)">
+            <tr v-for="run in dispRuns" :key="run.id" tabindex="0" @click="router.push(`/runs/${run.id}`)" @keydown.enter="router.push(`/runs/${run.id}`)">
               <td>{{ fmtDate(run.run_date) }}</td>
               <td>{{ run.filename }}</td>
               <td :class="covClass(run.overall_coverage)">
                 {{ fmtPercent(run.overall_coverage) }}%
               </td>
               <td>
-                <span class="badge" :class="(run.result || '').toLowerCase()">
-                  {{ run.result }}
+                <span class="badge" :class="covBadgeClass(run.overall_coverage)">
+                  {{ covStatus(run.overall_coverage) }}
                 </span>
               </td>
             </tr>
@@ -89,8 +95,14 @@ onMounted(async () =>{
 </template>
 
 <style scoped>
+  .empty{
+    text-align: center;
+      margin-top: 60px;
+      font-size: 1.1rem;
+      opacity: 0.8;
+  }
   .content{
-    max-width:750px;
+    max-width:min(1300px, 95%);
     margin: 0 auto;
   }
   .cov-good{
@@ -106,11 +118,15 @@ onMounted(async () =>{
     padding: 2px 8px;
     border-radius: 4px;
   }
-  .badge.passed{
+  .badge-good{
     color: #3fb950;
     background: rgba(46, 160, 67, 0.15);
   }
-  .badge.failed{
+  .badge-warn{
+    color: #d29922;
+    background: rgba(210, 153, 34, 0.15);
+  }
+  .badge-bad{
     color: #f85149;
     background: rgba(248, 81, 73, 0.15);
   }

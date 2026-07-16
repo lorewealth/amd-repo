@@ -6,7 +6,13 @@ export const fmtDate = (iso) =>
 export const fmtPercent = (n) => Number(n).toFixed(2)
 
 export const coverageColor = (n) =>
-  n >=90 ? '#3fb950' : n >= 70 ? '#d29922' : '#f85149'
+  n >= 95 ? '#3fb950' : n >= 80 ? '#d29922' : '#f85149'
 
 export const covClass = (n) =>
-  n >= 90 ? 'cov-good' : n >= 70 ? 'cov-warn' : 'cov-bad'
+  n >= 95 ? 'cov-good' : n >= 80 ? 'cov-warn' : 'cov-bad'
+
+export const covStatus = (n) =>
+  Number(n) >= 95 ? 'PASSED' : 'FAILED'
+
+export const covBadgeClass = (n) =>
+  Number(n) >= 95 ? 'badge-good' : Number(n) >= 80 ? 'badge-warn' : 'badge-bad'

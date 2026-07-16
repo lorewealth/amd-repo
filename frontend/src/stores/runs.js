@@ -1,11 +1,14 @@
 import { defineStore } from "pinia";
-import { getRuns } from '@/api/runs'
+import { getRun, getRuns } from '@/api/runs'
 
 export const useRunsStore = defineStore('runs', {
   state: () => ({
     runs: [],
     loading: false,
     error: null,
+    current: null,
+    currentLoading: false,
+    currentError: null,
   }),
   getters: {
     totalRuns: (state) => state.runs.length,
@@ -25,6 +28,21 @@ export const useRunsStore = defineStore('runs', {
       }
       finally {
         this.loading = false
+      }
+    },
+    async fetchRun(id) {
+      this.currentLoading = true
+      this.current = null
+      this.currentError = null
+      try {
+        const { data } = await getRun(id)
+        this.current = data
+      }
+      catch (e) {
+        this.currentError = e.response?.status ?? 'network'
+      }
+      finally {
+        this.currentLoading = false
       }
     },
   },

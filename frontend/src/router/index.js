@@ -13,16 +13,19 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: () => import('@/views/About.vue'),
+      meta: {requiresAuth: true}
     },
     {
       path: '/runs',
       name: 'runs',
-      component: () => import ('@/views/RunsList.vue')
+      component: () => import('@/views/RunsList.vue'),
+      meta: {requiresAuth: true}
     },
     {
       path: '/runs/:id',
       name: 'run-detail',
-      component: () => import('@/views/RunDetail.vue')
+      component: () => import('@/views/RunDetail.vue'),
+      meta: {requiresAuth: true}
     },
     {
       path: '/upload',
