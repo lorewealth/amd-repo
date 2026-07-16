@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { exchangeCode } from '@/api/auth'
+import { jwtPayload } from '@/utils/jwt'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({ token: null, user: null }),
@@ -20,6 +22,11 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       localStorage.removeItem('fcd-email')
       localStorage.removeItem('fcd-token')
+    },
+    async handleCallback(code){
+      const data = await exchangeCode(code)
+      const email = jwtPayload(data.access_token).sub
+      this.setSession(data.access_token, email)
     },
   },
 })

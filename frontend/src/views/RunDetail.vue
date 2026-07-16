@@ -3,27 +3,15 @@ import { useRoute } from 'vue-router';
 const route = useRoute()
 import BinCell from '@/components/BinCell.vue';
 import CoverageBar from '@/components/CoverageBar.vue';
-import { getRun } from '@/api/runs';
-import { onMounted, ref } from 'vue';
-import { fmtDate, fmtPercent } from '@/utils/format';
+import { onMounted } from 'vue';
+import { covBadgeClass, covStatus, fmtDate, fmtPercent } from '@/utils/format';
+import { storeToRefs } from 'pinia';
+import { useRunsStore } from '@/stores/runs';
 
+const store = useRunsStore()
+const { current: run, currentLoading: loading, currentError: error } = storeToRefs(store)
 
-const run = ref(null)
-const loading = ref(true)
-const error = ref(null)
-
-onMounted(async () =>{
-  try{
-    const response = await getRun(route.params.id)
-    run.value = response.data
-  }
-  catch(e){
-    error.value = e.response?.status ?? 'network'
-  }
-  finally{
-    loading.value = false
-  }
-})
+onMounted(async () => store.fetchRun(route.params.id))
 
 </script>
 
@@ -33,14 +21,16 @@ onMounted(async () =>{
     <p>Rularea #{{route.params.id}} nu exista</p>
   </div>
   <p v-else-if="error">Nu am putut incarca datele</p>
-  <div class="displaying" v-else>
-    <div>
+  <div class="displaying" v-else-if="run">
+    <div class="card">
       <p>Detalii pentru rularea #{{route.params.id}}:</p>
       <p>Fisier: {{run.filename}}</p>
       <p>Data rularii: {{fmtDate(run.run_date)}}</p>
       <p v-if="run.uploaded_by">Urcat de: {{run.uploaded_by}}</p>
       <p>Procentaj general: {{fmtPercent(run.overall_coverage)}}%</p>
-      <p>Rezultat: {{run.result}}</p>
+      <p>
+        Rezultat: <span class="badge" :class="covBadgeClass(run.overall_coverage)">{{ covStatus(run.overall_coverage) }}</span>
+      </p>
       <p>Binuri ratate: {{run.missed_bins}}/{{run.total_bins}}</p>
       <CoverageBar label="OVERALL" :percent="run.overall_coverage"/>
       <div class="legend">
@@ -49,7 +39,7 @@ onMounted(async () =>{
         <span class="swatch c-red"></span> MISS - bin neatins
       </div>
     </div>
-    <div v-for="cp in run.coverpoints" :key="cp.name">
+    <div class="cp-card" v-for="cp in run.coverpoints" :key="cp.name">
       <CoverageBar :label="cp.name" :percent="cp.coverage"/>
       <span class="cp-summary">
         {{cp.total_bins - cp.missed_bins}}/{{cp.total_bins}} bin-uri atinse
@@ -62,11 +52,23 @@ onMounted(async () =>{
 </template>
 
 <style scoped>
+.cp-card{
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.card{
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
 .displaying{
   display:flex;
   flex-direction:column;
   gap:24px;
-  max-width:750px;
+  max-width:min(1300px, 95%);
   margin: 0 auto;
   margin-bottom: 25px;
 }
@@ -80,28 +82,10 @@ onMounted(async () =>{
 .grid-rows{
   grid-template-columns: 1fr;
 }
-.legend{
-  display:flex;
-  align-items: center;
-  gap:6px;
-  font-size:0.85rem;
-}
 .cp-summary{
   display:block;
   margin-bottom:14px;
   font-size:0.85rem;
-}
-.swatch{
-  width:12px;
-  height:12px;
-  border-radius:3px;
-  display:inline-block;
-}
-.c-green{
-  background: rgba(63, 185, 80, 1);
-}
-.c-red{
-  background: rgba(248, 81, 73, 1.0);
 }
 .btn{
   font-size: 0.85rem;

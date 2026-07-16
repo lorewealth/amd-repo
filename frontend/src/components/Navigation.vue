@@ -9,18 +9,22 @@ const route = useRoute()
 
 function onLogout(){
   auth.logout()
-  router.push({name:'runs'})
+  router.push({name:'login'})
 }
 </script>
 
 <template>
+
   <nav class="nav-wrapper">
-    <template v-if="route.name === 'runs'">
-      <RouterLink :to="{name: 'about'}" class="btn">Despre</RouterLink>
-      <RouterLink :to="{name: 'upload'}" class="btn">Incarca</RouterLink>
-    </template>
-    <RouterLink v-else :to="{name:'runs'}" class="btn">Inapoi la rulari</RouterLink>
-    <div v-if="auth.isAuthenticated">
+    <div class="nav-left">
+      <h1>Functional Coverage Dashboard</h1>
+      <template v-if="route.name === 'runs'">
+        <RouterLink :to="{name: 'about'}" class="btn">Despre</RouterLink>
+        <RouterLink v-if="auth.isAuthenticated" :to="{name: 'upload'}" class="btn">Incarca</RouterLink>
+      </template>
+      <RouterLink v-else-if="route.name !== 'login'" :to="{name:'runs'}" class="btn">Inapoi la rulari</RouterLink>
+    </div>
+    <div v-if="auth.isAuthenticated" class="nav-right">
       <span>{{auth.user?.email}}</span>
       <button class="btn" @click="onLogout">Logout</button>
     </div>
@@ -31,9 +35,17 @@ function onLogout(){
 <style scoped>
   .nav-wrapper{
     display:flex;
-    flex-direction:row;
-    justify-content:center;
+    justify-content:space-between;
     align-items:center;
+    gap:12px;
+  }
+  .nav-left, .nav-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  h1{
+    font-size:1.4rem;
   }
 
 </style>

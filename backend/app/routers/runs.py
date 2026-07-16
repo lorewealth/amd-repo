@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-from backend.app.auth.dependencies import check_email
+from backend.app.auth.dependencies import check_email, get_current_user
 from backend.app.config import get_settings
 from backend.app.schemas import RunDetail, RunListParams, RunSummary
 from backend.app.services.exceptions import DuplicateRunError, InvalidLogError, RunNotFound
@@ -18,8 +18,11 @@ router = APIRouter()
     "/",
     response_model=list[RunSummary],
     summary="Afisarea totala a rularilor(depinzand de param. limit)",
+    responses={
+        401: {"description": "Nu sunteti logati in sistem"},
+    },
 )
-def list_runs(params: RunListParams = Depends(), db=Depends(get_db)):
+def list_runs(params: RunListParams = Depends(), db=Depends(get_db), user: str = Depends(get_current_user)):
     """Returneaza o lista paginata de rulari"""
     return run_service.list_runs(db, params)
 
@@ -30,9 +33,10 @@ def list_runs(params: RunListParams = Depends(), db=Depends(get_db)):
     summary="Afiseaza detalii a unei rulari dupa id",
     responses={
         404: {"description": "Nu a fost gasita aceasta rulare dupa id specificat"},
+        401: {"description": "Nu sunteti logati in sistem"},
     },
 )
-def get_run(run_id: int, db=Depends(get_db)):
+def get_run(run_id: int, db=Depends(get_db), user: str = Depends(get_current_user)):
     """Returneaza detalii unei singure rulari dupa id, inclusiv coverpoints si bins"""
     try:
         return run_service.get_run(db, run_id)

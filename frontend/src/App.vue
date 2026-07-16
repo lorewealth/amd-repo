@@ -7,7 +7,6 @@ import Navigation from '@/components/Navigation.vue';
 <template>
   <header>
     <div class="div-wrapper">
-      <h1>Functional Coverage Dashboard</h1>
       <Navigation/>
     </div>
   </header>
@@ -18,9 +17,6 @@ import Navigation from '@/components/Navigation.vue';
 
 <style scoped>
 .div-wrapper{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin-top: 25px;
+  padding: 16px 24px;
 }
 </style>

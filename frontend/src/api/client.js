@@ -1,13 +1,21 @@
-import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
-import router from '@/router'
+
+export const API_BASE = '/api'
 
 const client = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE,
 })
 
+let getToken = () => null
+let handleUnauth = () => { }
+
+export function setupAuthHooks(hooks) {
+  getToken = hooks.getToken
+  handleUnauth = hooks.handleUnauth
+}
+
 client.interceptors.request.use((config) => {
-  const token = useAuthStore().token
+  const token = getToken()
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
@@ -15,8 +23,7 @@ client.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      useAuthStore().logout()
-      router.push({name:'login'})
+      handleUnauth()
     }
     return Promise.reject(err)
   },
